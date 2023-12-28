@@ -1,0 +1,51 @@
+import pickle
+from tkinter import *
+import os
+
+tk=Tk()
+tk.title("순위")
+tk.geometry("600x600")
+
+data=[]
+rk=[]
+
+def draw():
+	count1,count2=5,0
+	for i in range(len(data)):
+		if i%15==0:
+			count2+=1
+			count1=5
+		color="yellow" if i==0 else "#A7A716" if i==1 else "#727223" if i==2 else None
+		fcolor="black" if i==0 or i==1 or i==2 else "white"
+		rk.append(Label(tk,text="이름: "+data[i][0]+" 점수: "+str(data[i][1]),fg=fcolor,bg=color).grid(row=count1,column=count2,ipadx=5,pady=5))
+		count1+=1
+
+if os.path.isfile("data.pickle"):
+	with open("data.pickle","rb")as pi:
+		data=pickle.load(pi)
+		draw()
+
+def click():
+	global data
+	a,b=entry1.get(),entry2.get()
+	data.append([str(a),int(b)])
+	data.sort(key=lambda x:x[1], reverse=True)
+	
+	with open("data.pickle","wb")as p:
+		pickle.dump(data,p)
+		
+		draw()
+
+label1=Label(tk,text="이름").grid(row=0,column=0)
+label2=Label(tk,text="점수").grid(row=1,column=0)
+space=Label(tk,text="").grid(row=2,column=0)
+space2=Label(tk,text="").grid(row=4,column=0)
+entry1=Entry(tk)
+entry2=Entry(tk)
+
+entry1.grid(row=0,column=1,padx=10)
+entry2.grid(row=1,column=1,padx=10)
+
+btn=Button(tk,text="등록",command=click).grid(row=3,column=1,padx=5, pady=10, sticky="nsew")
+
+tk.mainloop()
